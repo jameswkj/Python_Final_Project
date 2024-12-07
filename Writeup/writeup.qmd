@@ -1,6 +1,6 @@
 ---
 title: "Final Project"
-author: "KJ WU, Carey Cui, XiaoTian Tang"
+author: "Kaijie(KJ) WU, Carey Cui, XiaoTian Tang"
 date: today
 date-format: long
 format: 
@@ -12,7 +12,9 @@ format:
 engine: jupyter
 ---
 
+**Respective Sections:** KJ:Education parts/ Carey Cui:Age parts/ XiaoTian Tang: States parts
 
+**Github usernames:** KJ(jameswkj) / Carey Cui(CUI19999) / XiaoTian Tang(xiaotiantangishere)
 ```{python}
 %reset -f
 import pandas as pd
@@ -23,6 +25,8 @@ import os
 
 
 #import data
+# os.chdir('/Users/Kaijie/Desktop/Python II Final Project')
+# age_df = pd.read_csv('Education/CPS_Demographic_Turnout_Rates_v1.0.csv')
 os.chdir('/Users/zhengcui/Desktop/python 2/Age')
 age_df = pd.read_csv("Data/CPS_Demographic_Turnout_Rates_v1.0.csv")
 
@@ -40,6 +44,11 @@ presidential_group = age_group[age_group['YEAR'] >= 1988]
 presidential_group = age_group[age_group['YEAR'] % 4 == 0]
 
 ```
+
+This year, 2024, is an election year. We have witnessed a lot of big news: the withdrawal of Joe Biden and Donald Trump's return to the White House. Some states indicate that the turnout rate is lower than the election yeat in 2020. Alabama even declares the lowest turnout rate in over 30 years. These events make us interested in turnout rate. Our research questions are What factors affect turnout rate and how these fatocrs affect turnout rates.
+
+The first factor we think is state.
+(Xiaotian)
 
 The second factor we are interested in is age. We want to analyze how age affects turnout rates. To start, we observe that the data is distributed over the year, with each year having a different turnout rate for various age groups. Based on these observations, we use Altair to plot the first diagram. We set the election year as the x-axis and the turnout rate as the y-axis, using different colors for each age group. Here is what the first diagram looks like:
 ```{python}
@@ -117,6 +126,61 @@ bar_chart
 ```
 
 Based on the diagrams above, we can intuitively see the change in turnout rate between different age groups. As people getting older, the turnout rate tends to increase, and the differences in turnout rates diminish. Thus, we can confirm that age does have an impact on turnout rates.
+
+The third factor we are interested in is education. In this part, we are looking for the connection between the education level and the turnout rates. As a result, we have four education levels: post-college graduate, some or college graduate, high school graduate, and no high school. After that, we collect the data from the Election Lab at the University of Florida. The data are reweighted by the author using a procedure proposed by Hur and Achen. We filter the data and have a new data set of turnout rates by different eduation level. Finally, we draw the line chart with four different colors to present the change in turnout rates by education level from 1988 to 2020.
+
+```{python}
+# Load the dataset
+data = pd.read_csv('Data/CPS_Demographic_Turnout_Rates_v1.0.csv')
+
+# Specify the election years of interest
+specified_years = [1988, 1992, 1996, 2000, 2004, 2008, 2012, 2016, 2020]
+
+# Convert 'YEAR' to integer for proper sorting and plotting in Altair
+data['YEAR'] = data['YEAR'].astype(int)
+
+# Filter the data for the specified years and melt it for Altair plotting
+alt_data = data[data['YEAR'].isin(specified_years)][['YEAR', 'CPS_ADJ_NOHS_RATE', 'CPS_ADJ_HS_RATE', 'CPS_ADJ_COLLEGE_RATE', 'CPS_ADJ_POST_RATE']]
+alt_data = alt_data.melt('YEAR', var_name='Education Level', value_name='Turnout Rate')
+
+# Map original column names to more descriptive labels
+education_label_map = {
+    'CPS_ADJ_NOHS_RATE': 'No High School',
+    'CPS_ADJ_HS_RATE': 'High School Graduate',
+    'CPS_ADJ_COLLEGE_RATE': 'Some or College Graduate',
+    'CPS_ADJ_POST_RATE': 'Post-College School'
+}
+alt_data['Education Level'] = alt_data['Education Level'].map(education_label_map)
+
+# Create the Altair chart
+chart = alt.Chart(alt_data).mark_line(point=True).encode(
+    x=alt.X('YEAR:N', axis=alt.Axis(title='Year', labelAngle=0)),  # Treat year as nominal for custom sorting
+    y=alt.Y('Turnout Rate:Q', axis=alt.Axis(title='Adjusted Turnout Rate')),
+    color=alt.Color('Education Level:N', legend=alt.Legend(title="Education Level")),
+    tooltip=['YEAR', 'Education Level', 'Turnout Rate']
+).properties(
+    title='Turnout Rate by Education Level for Specified U.S. Election Years',
+    width=600,
+    height=400
+).configure_axis(
+    grid=True
+)
+
+chart.display()
+
+```
+
+From the above chart, we can see that the citizens with higher education level have higher turnout rates. The citizens with post-college school degrees have the highest turnout rate, but the citizens without high school education have the lowest turnout rates. Additionally, the gaps of turnout rates between each education level are similar between 1988 and 2020 (around 15%).
+
+To increase the turnout rates, there are three potential policy implications. The first one is to optimize the election policies between states. This one would help increase the turnout rates in the non-swing states. The second is to target the young voters. The turnout rates in young people are much lower than the old people. Motivating young people to vote can dramatically increase turnout rates. The third one is to focus on the low-education groups. The people with low education level have low turnout rates. Sensitizing them to the importance of voting might be one way to increase turnout rates.
+
+However, there are some limitations in the project. The first one is the omitted variable bias. There would be other variables correlated with turnout rates and the above three factors, so biased outcome. Besides, Due to the data limitation, age, education cannot be classified as states level.Therefore, interaction effects between states and demographic variables could not be explored.
+
+In order to study this topic in greater depth, the future direction should concentrate on exploring additional variables, using advanced modeling techniques, and expanding outcome measures about political participation. Additional variables would help to address the problem of biased outcome. The advanced modeling techniques, such as nonlinear regression, would show the correlation between these fators and turnout rates. Finally, turnout rates cannot be 100 percent to represent political participation, so the consideration of other measurements is also significant.
+
+In conclusion, we believe that states, age, and education level are three factors affect the turnout rates. Although there are some limitations in the project, our project deserves a further research and more concentration.
+
+
 
 
 
