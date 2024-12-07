@@ -12,14 +12,19 @@ format:
 engine: jupyter
 ---
 
+
 ```{python}
 %reset -f
 import pandas as pd
 import altair as alt
 import statsmodels.api as sm
 alt.renderers.enable('html')
+import os
+
+
 #import data
-age_df = pd.read_csv('/Users/zhengcui/Desktop/python 2/Age/Data/CPS_Demographic_Turnout_Rates_v1.0.csv')
+os.chdir('/Users/zhengcui/Desktop/python 2/Age')
+age_df = pd.read_csv("Data/CPS_Demographic_Turnout_Rates_v1.0.csv")
 
 age_group = age_df[['YEAR', 'CPS_ADJ_AGE1829_RATE', 'CPS_ADJ_AGE3044_RATE', 'CPS_ADJ_AGE4559_RATE', 'CPS_ADJ_AGE60_RATE']].copy()
 age_group_names = {
